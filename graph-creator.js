@@ -675,25 +675,26 @@ document.onload = (function(d3){
         .attr('id', 'main-svg');
 
   var req = new XMLHttpRequest();
-  req.open('GET', '/issues.json');
+  req.open('GET', '/coursePrereqs.json');
   req.onreadystatechange = function() {
     if(req.readyState === 4) {
       var response = JSON.parse(req.responseText);
       var counter = 0;
-      response.issues.map(function(issue) {
-        issue.description = issue.title;
-        issue.title = "#" + issue.number;
-        issue.id = counter;
-        issue.x = 0;
-        issue.y = counter * (consts.yMinSpacing + consts.nodeHeight);
+      response.courses.map(function(course) {
+	//no need to set attributes manually for now as we are using test data that we can format as necessary
+        //issue.description = issue.title;
+        //issue.title = "#" + issue.number;
+        course.id = counter;
+        course.x = 0;
+        course.y = counter * (consts.yMinSpacing + consts.nodeHeight);
         counter++;
       });
       // dependencies = [ {source:issues[0], target:issues[1] }];
       var dependencies = [];
 
-      graph = new GraphCreator(svg, response.issues, dependencies);
+      graph = new GraphCreator(svg, response.courses,dependencies);
       // assumes that if nodes are provided, the ids are sequential
-      graph.setIdCt(response.issues.length);
+      graph.setIdCt(response.courses.length);
       graph.updateGraph();
     }
   };

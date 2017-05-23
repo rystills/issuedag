@@ -1,0 +1,12 @@
+{
+  "courses": [
+    {
+      "title": CS1,
+      "description": "Computer Science 1"
+    },
+  
+    {
+      "title": DS,
+      "description": "Data Structures"
+    }
+}
