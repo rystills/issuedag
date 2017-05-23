@@ -1,12 +1,14 @@
 {
   "courses": [
     {
-      "title": CS1,
+      "title": "CS1",
       "description": "Computer Science 1"
     },
   
     {
-      "title": DS,
-      "description": "Data Structures"
+      "title": "DS",
+      "description": "Data Structures",
+      "prereq": "CS1"
     }
+  ]
 }

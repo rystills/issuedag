@@ -680,17 +680,22 @@ document.onload = (function(d3){
     if(req.readyState === 4) {
       var response = JSON.parse(req.responseText);
       var counter = 0;
+      var dependencies = [];
+      var courseDict = {};
       response.courses.map(function(course) {
 	//no need to set attributes manually for now as we are using test data that we can format as necessary
         //issue.description = issue.title;
         //issue.title = "#" + issue.number;
         course.id = counter;
+        courseDict[course.title] = course.id;
+        if (course.hasOwnProperty("prereq")) {
+	  dependencies.push({source: response.courses[courseDict[course.prereq]], target: response.courses[course.id]});
+	}
         course.x = 0;
         course.y = counter * (consts.yMinSpacing + consts.nodeHeight);
         counter++;
       });
       // dependencies = [ {source:issues[0], target:issues[1] }];
-      var dependencies = [];
 
       graph = new GraphCreator(svg, response.courses,dependencies);
       // assumes that if nodes are provided, the ids are sequential
