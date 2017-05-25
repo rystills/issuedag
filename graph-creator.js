@@ -13,10 +13,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
   ENTER_KEY: 13,
   M_KEY: 77,
   nodeRadius: 50,
-  nodeWidth: 200,
-  nodeHeight:100,
   xSnapInterval: 280, // number of pixels each x will "snap" to
-  yMinSpacing: 30,
+  nodeMinSpacing: 30,
 };
 
   // define graphcreator object
@@ -598,14 +596,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
   var width = window.innerWidth || docEl.clientWidth || bodyEl.clientWidth,
       height =  window.innerHeight|| docEl.clientHeight|| bodyEl.clientHeight;
 
-  var xLoc = width/2 - 25,
-      yLoc = 100;
-
-  // initial node data
-  var nodes = [{title: "new concept", id: 0, x: xLoc, y: yLoc},
-               {title: "new concept", id: 1, x: xLoc, y: yLoc + 200}];
-  var edges = [{source: nodes[1], target: nodes[0]}];
-
+  var xLoc = width/2,
+      yLoc = consts.nodeRadius + consts.nodeMinSpacing;
 
   //** MAIN SVG **/
   var svg = d3.select('#graph').append("svg")
@@ -631,8 +623,8 @@ document.onload = (function(d3, saveAs, Blob, undefined){
         if (course.hasOwnProperty("prereq")) {
 	  dependencies.push({source: response.courses[courseDict[course.prereq]], target: response.courses[course.id]});
 	}
-        course.x = 0;
-        course.y = counter * (consts.yMinSpacing + consts.nodeHeight);
+        course.x = xLoc;
+        course.y = yLoc + counter * (consts.nodeMinSpacing + 2 * consts.nodeRadius);
         counter++;
       });
       // dependencies = [ {source:issues[0], target:issues[1] }];
@@ -644,4 +636,5 @@ document.onload = (function(d3, saveAs, Blob, undefined){
     }
   };
   req.send();
+  
 })(window.d3, window.saveAs, window.Blob);
