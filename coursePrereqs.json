@@ -1,14 +1,22 @@
 {
-  "courses": [
-    {
-      "title": "CS1",
-      "description": "Computer Science 1"
-    },
-  
-    {
-      "title": "DS",
-      "description": "Data Structures",
-      "prereq": "CS1"
-    }
-  ]
+	"courses": 
+	[
+		{
+			"dependency_vertex":
+			{
+				"course_uid": "CSCI-2200",
+				"prereq_formula": "CSCI-1200 & CALC-I-META",
+				"coreq_formula": "",
+				"suggested_prereq_formula": "CSCI-1200 & MATH-1020",
+				"suggested_coreq_formula": ""
+			},
+			"meta_nodes":
+			[
+				{
+					"meta_uid": "CALC-I-META",
+					"contains": ["MATH-1010","MATH-1500"]
+				}
+			]
+		}
+	]
 }

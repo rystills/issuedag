@@ -597,7 +597,7 @@ document.onload = (function(d3, saveAs, Blob, undefined){
       height =  window.innerHeight|| docEl.clientHeight|| bodyEl.clientHeight;
 
   var xLoc = width/2,
-      yLoc = consts.nodeRadius + consts.nodeMinSpacing;
+      yLoc = height/2;//consts.nodeRadius + consts.nodeMinSpacing;
 
   //** MAIN SVG **/
   var svg = d3.select('#graph').append("svg")
@@ -615,24 +615,38 @@ document.onload = (function(d3, saveAs, Blob, undefined){
       var dependencies = [];
       var courseDict = {};
       response.courses.map(function(course) {
-	//no need to set attributes manually for now as we are using test data that we can format as necessary
         //issue.description = issue.title;
-        //issue.title = "#" + issue.number;
+        course.title = course.dependency_vertex.course_uid;
         course.id = counter;
-        courseDict[course.title] = course.id;
+        /*courseDict[course.title] = course.id;
         if (course.hasOwnProperty("prereq")) {
 	  dependencies.push({source: response.courses[courseDict[course.prereq]], target: response.courses[course.id]});
-	}
+	}*/
         course.x = xLoc;
         course.y = yLoc + counter * (consts.nodeMinSpacing + 2 * consts.nodeRadius);
-        counter++;
+        ++counter;
       });
       // dependencies = [ {source:issues[0], target:issues[1] }];
 
-      graph = new GraphCreator(svg, response.courses,dependencies);
+	//second pass: generate meta-nodes
+	var metaNodes = []
+      response.courses.forEach(function(course) {
+    	if (course.hasOwnProperty("meta_nodes") && course.meta_nodes.length > 0) {
+    		for (var i = 0; i < course.meta_nodes.length; ++i) {
+    			metaNodes.push({"title": course.meta_nodes[i].meta_uid, "id": counter,
+    			"x": course.x - (consts.nodeMinSpacing + 2 * consts.nodeRadius),
+    			"y": course.y - (consts.nodeMinSpacing + 2 * consts.nodeRadius)});
+    			 dependencies.push({source: metaNodes[metaNodes.length-1], target: course});
+    			++counter;
+    		}
+		}
+      });
+
+      graph = new GraphCreator(svg, response.courses.concat(metaNodes),dependencies);
       // assumes that if nodes are provided, the ids are sequential
       graph.setIdCt(response.courses.length);
       graph.updateGraph();
+      
     }
   };
   req.send();
