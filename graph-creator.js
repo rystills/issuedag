@@ -655,10 +655,10 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 			var response = JSON.parse(req.responseText);
 			var counter = 0; //used to assign a numerical id to each node
 			var dependencies = []; //list of edges for the graph
-			var courseDict = {}; //dict of course_uid:course reference for edge construction
+			var courseDict = {}; //dict of course_uid:course references for edge construction
 			var nodes = []; //store list of nodes for the graph
 			var metaNodes = []; //store a list of metaNodes separately (concatenated with nodes for GraphCreator)
-			var metaDict = {}; //dict of meta_uid:metaNode reference for edge construction
+			var metaDict = {}; //dict of meta_uid:metaNode references for edge construction
 			
 			//create nodes with titles and ids for all courses in JSON file
 			response.CSCI_nodes.forEach(function(course) {
@@ -673,15 +673,18 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 			});
 
 			//create meta-nodes (same process as with nodes above)
+			var xStartPos = xLoc + consts.nodeMinSpacing + 2 * consts.nodeRadius;
+			var yStartPos = height/2;
 			response.meta_nodes.forEach(function(meta) {
 				metaNodes.push({
 					"title": meta.name,
 					"id": counter,
-					"x": xLoc,
-					"y": yLoc + counter * (consts.nodeMinSpacing + 2 * consts.nodeRadius)
+					"x": xStartPos,
+					"y": yStartPos
 				});
 				metaDict[meta.meta_uid] = metaNodes[metaNodes.length - 1];
 				++counter;
+				yStartPos += consts.nodeMinSpacing + 2 * consts.nodeRadius;
 			});
 
 			graph = new GraphCreator(svg, nodes.concat(metaNodes), dependencies);
