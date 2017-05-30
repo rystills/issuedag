@@ -653,9 +653,9 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 			var counter = 0;
 			var dependencies = [];
 			var courseDict = {};
-			response.courses.map(function(course) {
+			response.CSCI_nodes.map(function(course) {
 				//issue.description = issue.title;
-				course.title = course.dependency_vertex.course_uid;
+				course.title = course.course_uid;
 				course.id = counter;
 				/*courseDict[course.title] = course.id;
         if (course.hasOwnProperty("prereq")) {
@@ -669,7 +669,7 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 
 			//second pass: generate meta-nodes
 			var metaNodes = []
-			response.courses.forEach(function(course) {
+			response.CSCI_nodes.forEach(function(course) {
 				if (course.hasOwnProperty("meta_nodes") && course.meta_nodes.length > 0) {
 					for (var i = 0; i < course.meta_nodes.length; ++i) {
 						metaNodes.push({
@@ -687,9 +687,9 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 				}
 			});
 
-			graph = new GraphCreator(svg, response.courses.concat(metaNodes), dependencies);
+			graph = new GraphCreator(svg, response.CSCI_nodes.concat(metaNodes), dependencies);
 			// assumes that if nodes are provided, the ids are sequential
-			graph.setIdCt(response.courses.length);
+			graph.setIdCt(response.CSCI_nodes.length);
 			graph.updateGraph();
 
 		}
