@@ -644,54 +644,54 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 		.attr("height", height)
 		.attr("xmlns", "https://www.w3.org/2000/svg")
 		.attr('id', 'main-svg');
-
+	
+	//load in course data
 	var req = new XMLHttpRequest();
 	req.open('GET', '/coursePrereqs.json');
 	req.onreadystatechange = function() {
 		if (req.readyState === 4) {
 			var response = JSON.parse(req.responseText);
-			var counter = 0;
-			var dependencies = [];
-			var courseDict = {};
+			var counter = 0; //used to assign a numerical id to each node
+			var dependencies = []; //list of edges for the graph
+			var courseDict = {}; //dict of course_uid:course reference for edge construction
+			var metaNodes = []; //store a list of metaNodes separately (concatenated with nodes for GraphCreator)
+			var metaDict = {}; //dict of meta_uid:metaNode reference for edge construction
+			
+			//create nodes with titles and ids for all courses in JSON file
 			response.CSCI_nodes.map(function(course) {
 				//issue.description = issue.title;
 				course.title = course.course_uid;
 				course.id = counter;
-				/*courseDict[course.title] = course.id;
-        if (course.hasOwnProperty("prereq")) {
-	  dependencies.push({source: response.courses[courseDict[course.prereq]], target: response.courses[course.id]});
-	}*/
 				course.x = xLoc;
 				course.y = yLoc + counter * (consts.nodeMinSpacing + 2 * consts.nodeRadius);
+				courseDict[course.course_uid] = course;
 				++counter;
 			});
-			// dependencies = [ {source:issues[0], target:issues[1] }];
 
-			//second pass: generate meta-nodes
-			var metaNodes = []
-			response.CSCI_nodes.forEach(function(course) {
-				if (course.hasOwnProperty("meta_nodes") && course.meta_nodes.length > 0) {
-					for (var i = 0; i < course.meta_nodes.length; ++i) {
-						metaNodes.push({
-							"title": course.meta_nodes[i].meta_uid,
-							"id": counter,
-							"x": course.x - (consts.nodeMinSpacing + 2 * consts.nodeRadius),
-							"y": course.y - (consts.nodeMinSpacing + 2 * consts.nodeRadius)
-						});
-						dependencies.push({
-							source: metaNodes[metaNodes.length - 1],
-							target: course
-						});
-						++counter;
-					}
-				}
+			//generate meta-nodes
+			response.meta_nodes.forEach(function(meta) {
+				metaNodes.push({
+					"title": meta.name,
+					"id": counter,
+					"x": xLoc,
+					"y": yLoc + counter * (consts.nodeMinSpacing + 2 * consts.nodeRadius)
+				});
+				metaDict[meta.meta_uid] = metaNodes[metaNodes.length - 1];
+				++counter;
 			});
 
 			graph = new GraphCreator(svg, response.CSCI_nodes.concat(metaNodes), dependencies);
 			// assumes that if nodes are provided, the ids are sequential
 			graph.setIdCt(response.CSCI_nodes.length);
 			graph.updateGraph();
-
+			
+			//second pass: all nodes and meta-nodes have been generated, now create dependency edges
+			//TODO: fill me in
+			// dependencies = [ {source:issues[0], target:issues[1] }];
+			/*dependencies.push({
+					source: metaNodes[metaNodes.length - 1],
+					target: meta
+			});*/
 		}
 	};
 	req.send();
