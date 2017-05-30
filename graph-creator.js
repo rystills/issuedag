@@ -340,11 +340,13 @@ document.onload = (function(d3, saveAs, Blob, undefined) {
 		d3.event.stopPropagation();
 		state.mouseDownNode = d;
 		if (d3.event.shiftKey) {
-			state.shiftNodeDrag = d3.event.shiftKey;
-			// reposition dragged directed edge
-			thisGraph.dragLine.classed('hidden', false)
-				.attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
-			return;
+			if (consts.userCanEdit) {
+				state.shiftNodeDrag = d3.event.shiftKey;
+				// reposition dragged directed edge
+				thisGraph.dragLine.classed('hidden', false)
+					.attr('d', 'M' + d.x + ',' + d.y + 'L' + d.x + ',' + d.y);
+				return;
+			}
 		}
 	};
 
